@@ -25,12 +25,12 @@ public class MainActivity extends AppCompatActivity {
         textViewResult = findViewById(R.id.text_view_result);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://jsonplaceholder.typicode.com").addConverterFactory(GsonConverterFactory.create()).build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        //getPosts();
-        getComments();
+        getPosts();
+        //getComments();
     }
 
     private void getPosts(){
-        Call<List<Post>> call = jsonPlaceHolderApi.getPosts();
+        Call<List<Post>> call = jsonPlaceHolderApi.getPosts(1);
 
         call.enqueue(new Callback<List<Post>>() {
             @Override
