@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
         textViewResult = findViewById(R.id.text_view_result);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://jsonplaceholder.typicode.com").addConverterFactory(GsonConverterFactory.create()).build();
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi.class);
-        getPosts();
+        //getPosts();
         //getComments();
+        createPost();
     }
 
     private void getPosts(){
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getComments(){
-        Call<List<Comment>> call = jsonPlaceHolderApi.getComments(3);
+        Call<List<Comment>> call = jsonPlaceHolderApi.getComments("posts/3/comments");
 
         call.enqueue(new Callback<List<Comment>>() {
             @Override
@@ -98,4 +99,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void createPost(){
+        final Post post = new Post(23, "New Title", "New Text");
+
+        Call<Post> call = jsonPlaceHolderApi.createPost(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if(!response.isSuccessful()){
+                    textViewResult.setText("Code: "+response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content +="Code: "+response.code()+"\n";
+                content += "ID: "+postResponse.getId()+ "\n";
+                content+="Text: "+postResponse.getText()+"\n\n";
+                content += "ID: "+postResponse.getUserId()+ "\n";
+                content+="Text: "+postResponse.getTitle()+"\n\n";
+                textViewResult.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                textViewResult.setText(t.getMessage());
+            }
+        });
+    }
 }
